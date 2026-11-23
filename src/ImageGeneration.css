@@ -111,15 +111,13 @@
 }
 .generation-card .image-picture {
   opacity: 0;
-  scale: 1.15;
   filter: blur(24px) saturate(1.4);
-  /* The picture settles beneath the independent top-to-bottom reveal mask. */
-  transition: opacity .4s var(--image-ease), filter .9s var(--image-ease), scale .9s var(--image-ease) .15s;
+  /* Scale follows late reveal progress, not the initial masked crossfade. */
+  transition: opacity .4s var(--image-ease), filter .9s var(--image-ease);
 }
 .generation-card .image-frame:not([data-phase="forming"]) .image-wash { opacity: 1; }
 .generation-card .image-frame:not([data-phase="forming"]) .image-picture {
   opacity: 1;
-  scale: 1;
   filter: blur(0) saturate(1);
 }
 .generation-card .image-glow, .generation-card .image-spectrum {

@@ -42,6 +42,8 @@ export function ImageGeneration({
   const imageMask = useMotionTemplate`radial-gradient(120% 100% at 50% ${revealY}, #000 82%, transparent 100%)`;
   const rimMask = useMotionTemplate`radial-gradient(120% 100% at 50% ${revealY}, transparent 71.2%, #000 90.1%, transparent 106.3%)`;
   const rimOpacity = useTransform(reveal, [0, 0.08, 0.9, 1], [0, 0.85, 0.85, 0]);
+  // Hold the enlargement until the sweep exposes the picture, then visibly shrink it.
+  const pictureScale = useTransform(progress, value => 1 + 0.15 * (1 - smoothstep((value - 80) / 20)));
   const glowOpacity = useTransform(progress, [0, 10, 60, 74, 100], [0, 0.9, 0.9, 0, 0]);
   const glowRotation = useTransform(progress, [0, 100], [0, Math.max(0, duration) / 5 * 360]);
 
@@ -144,7 +146,8 @@ export function ImageGeneration({
           </motion.div>}
           <motion.div className="image-layer image-reveal" aria-hidden="true"
             style={{ maskImage: instant ? 'none' : imageMask, WebkitMaskImage: instant ? 'none' : imageMask }}>
-            <img ref={imageRef} className="image-layer image-picture" src={src || undefined} alt="" aria-hidden="true" draggable="false"
+            <motion.img ref={imageRef} className="image-layer image-picture" src={src || undefined} alt="" aria-hidden="true" draggable="false"
+              style={{ scale: instant ? 1 : pictureScale }}
               onLoad={() => { setFailed(false); setLoaded(true); }}
               onError={() => { setFailed(true); setLoaded(false); }} />
           </motion.div>

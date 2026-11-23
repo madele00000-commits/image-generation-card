@@ -102,13 +102,17 @@ Reduced-motion preferences skip the reveal once the image is available.
 - Between 30% and 54% of post-arrival progress, fog fills the frame and dots fade.
 - After the image arrives, the original rotating pink/violet/blue conic glow
   appears behind the reveal. At 60%, it fades while a 1.35× blurred wash appears
-  and the picture settles from 1.15× to 1× over 900ms with a 150ms lead-in.
+  and the sharp picture begins revealing at 1.15× scale.
 - From 60% to 100%, the original curved radial mask moves downward from above
   the frame, revealing sharp details from top to bottom. A matching spectral
   rim follows that edge; the mask sits outside the image's zoom so both edges
   stay aligned. There is no center-out expansion. Glow and rim are absent while
   awaiting the image and after completion, and skipped with reduced motion or
   `autoPlay={false}`.
+- The picture holds its 1.15× enlargement until 80% progress, when about half
+  is visible, then smoothly shrinks to 1× over the remaining reveal (1.28s at
+  the default duration). The zoom-out is visible instead of finishing behind
+  the mask, and the outer frame stays fixed.
 - The labels advance from `Generating scene` to `Coloring` to `Loading`, then
   fade after completion. Their layout space remains reserved.
 
