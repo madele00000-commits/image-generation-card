@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { animate, AnimatePresence, motion, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
+import { animate, AnimatePresence, motion, useMotionTemplate, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
 import { smoothstep, useImageFog } from './useImageFog.js';
 import './ImageGeneration.css';
 
@@ -36,11 +36,14 @@ export function ImageGeneration({
   const filled = useTransform(progress, value => smoothstep((value - 30) / 24));
   const dotOpacity = useTransform(filled, value => 1 - value);
   const cloudGrow = useTransform(progress, [0, 100], [0.72, 1]);
-  const refine = useTransform(progress, [60, 100], [1, 0]);
-  // The original spectral glow travels outward with the zoom, never down the frame.
-  const spectrumOpacity = useTransform(progress, [60, 64, 68, 71, 82], [0, 0.06, 0.35, 0.5, 0]);
-  const spectrumScale = useTransform(progress, [60, 82], [0.04, 2.4]);
-  const spectrumRotation = useTransform(progress, [60, 82], [-40, 80]);
+  // Original UsePlanes reveal: a curved edge descends from above the frame.
+  const reveal = useTransform(progress, [60, 100], [0, 1]);
+  const revealY = useTransform(reveal, [0, 1], ['-118%', '30.6%']);
+  const imageMask = useMotionTemplate`radial-gradient(120% 100% at 50% ${revealY}, #000 82%, transparent 100%)`;
+  const rimMask = useMotionTemplate`radial-gradient(120% 100% at 50% ${revealY}, transparent 71.2%, #000 90.1%, transparent 106.3%)`;
+  const rimOpacity = useTransform(reveal, [0, 0.08, 0.9, 1], [0, 0.85, 0.85, 0]);
+  const glowOpacity = useTransform(progress, [0, 10, 60, 74, 100], [0, 0.9, 0.9, 0, 0]);
+  const glowRotation = useTransform(progress, [0, 100], [0, Math.max(0, duration) / 5 * 360]);
 
   useImageFog({ imageRef, canvasRef, cloudRef, progress, src, loaded, loadingColor, loadingAccent, colorTransition,
     active: !failed && !instant && phase === 'forming' });
@@ -122,7 +125,7 @@ export function ImageGeneration({
         <motion.div className="image-frame" role="img" aria-label={alt} aria-busy={!ready && !failed}
           data-phase={src && loaded ? phase : 'forming'} data-error={failed || undefined}
           data-instant={instant && loaded || undefined}
-          style={{ '--cloud-grow': cloudGrow, '--image-filled': filled, '--image-refine': refine }}>
+          style={{ '--cloud-grow': cloudGrow, '--image-filled': filled }}>
           {(!instant || !loaded) && <>
             <canvas ref={canvasRef} className="image-layer image-trails" aria-hidden="true" />
             <motion.div className="dot-field" aria-hidden="true" style={{ opacity: dotOpacity }}>
@@ -136,13 +139,17 @@ export function ImageGeneration({
             </motion.div>
             {src && <img className="image-layer image-wash" src={src} alt="" aria-hidden="true" draggable="false" />}
           </>}
-          <img ref={imageRef} className="image-layer image-picture" src={src || undefined} alt="" aria-hidden="true" draggable="false"
-            onLoad={() => { setFailed(false); setLoaded(true); }}
-            onError={() => { setFailed(true); setLoaded(false); }} />
-          {!instant && <motion.div className="image-layer image-spectrum" aria-hidden="true"
-            style={{ opacity: spectrumOpacity, scale: spectrumScale }}>
-            <motion.div className="spectrum-colors" style={{ rotate: spectrumRotation }} />
+          {!instant && <motion.div className="image-layer image-glow" aria-hidden="true" style={{ opacity: glowOpacity }}>
+            <motion.div className="glow-colors" style={{ rotate: glowRotation }} />
           </motion.div>}
+          <motion.div className="image-layer image-reveal" aria-hidden="true"
+            style={{ maskImage: instant ? 'none' : imageMask, WebkitMaskImage: instant ? 'none' : imageMask }}>
+            <img ref={imageRef} className="image-layer image-picture" src={src || undefined} alt="" aria-hidden="true" draggable="false"
+              onLoad={() => { setFailed(false); setLoaded(true); }}
+              onError={() => { setFailed(true); setLoaded(false); }} />
+          </motion.div>
+          {!instant && <motion.div className="image-layer image-spectrum" aria-hidden="true"
+            style={{ opacity: rimOpacity, maskImage: rimMask, WebkitMaskImage: rimMask }} />}
         </motion.div>
       </motion.div>
     </section>

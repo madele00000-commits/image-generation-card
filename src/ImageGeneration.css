@@ -113,29 +113,27 @@
   opacity: 0;
   scale: 1.15;
   filter: blur(24px) saturate(1.4);
-  /* Let the enlarged wash land before the full-frame picture settles. */
+  /* The picture settles beneath the independent top-to-bottom reveal mask. */
   transition: opacity .4s var(--image-ease), filter .9s var(--image-ease), scale .9s var(--image-ease) .15s;
 }
 .generation-card .image-frame:not([data-phase="forming"]) .image-wash { opacity: 1; }
 .generation-card .image-frame:not([data-phase="forming"]) .image-picture {
   opacity: 1;
   scale: 1;
-  filter: blur(calc(var(--image-refine) * 8px)) saturate(1);
+  filter: blur(0) saturate(1);
 }
-.generation-card .image-spectrum {
+.generation-card .image-glow, .generation-card .image-spectrum {
   pointer-events: none;
-  transform-origin: 50% 50%;
-  /* Preserve the hues at low opacity without a bright white flash over cyan. */
-  mix-blend-mode: normal;
-  /* A soft spectral rim grows from the center without masking the picture's zoom. */
-  mask-image: radial-gradient(ellipse closest-side at center, rgb(0 0 0 / .08), rgb(0 0 0 / .2) 32%, rgb(0 0 0 / .7) 62%, transparent 100%);
-  -webkit-mask-image: radial-gradient(ellipse closest-side at center, rgb(0 0 0 / .08), rgb(0 0 0 / .2) 32%, rgb(0 0 0 / .7) 62%, transparent 100%);
+  mix-blend-mode: screen;
 }
-.generation-card .spectrum-colors {
+.generation-card .glow-colors {
   position: absolute;
   inset: -60%;
-  background: conic-gradient(from 30deg, #ec4899, #8b5cf6, #3b82f6, #22d3ee, #ec4899);
-  filter: blur(48px);
+  background: conic-gradient(from 0deg, #ff375f, #bf5af2, #5e5ce6, #0a84ff, #ff375f);
+  filter: blur(40px);
+}
+.generation-card .image-spectrum {
+  background: linear-gradient(100deg, #ff375f 0%, #bf5af2 32%, #5e5ce6 64%, #0a84ff 100%);
 }
 .generation-card .image-frame[data-phase="done"] .dot-cloud,
 .generation-card .image-frame[data-error] .dot-cloud { animation-play-state: paused; }

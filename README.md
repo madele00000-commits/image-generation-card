@@ -2,8 +2,8 @@
 Image generation card with halftone dots, fog, color adaptation and zoom reveal
 
 A reusable React + Motion card with irregular halftone clouds, cyan fog and a
-small fixed brown patch, image-derived color blending, and a full-frame zoom reveal
-with a center-out spectral glow.
+small fixed brown patch, image-derived color blending, and the original UsePlanes
+spectral glow and top-to-bottom reveal, with the image settling beneath it.
 Only the English status header and image are shown. The header disappears after
 the image settles, without moving the frame.
 
@@ -100,13 +100,15 @@ Reduced-motion preferences skip the reveal once the image is available.
 - If a remote image blocks pixel sampling, its blurred pixels provide the
   color transition directly, without blocking the final reveal.
 - Between 30% and 54% of post-arrival progress, fog fills the frame and dots fade.
-- At 60%, a 1.35× blurred wash appears over 150ms. The full picture fades in over
-  400ms, then settles from 1.15× to 1× over 900ms with a 150ms lead-in.
-- During that same zoom, the original pink/violet/blue spectral glow expands
-  from the center to the frame's edges at low intensity. Its onset builds gently
-  instead of flashing at the center, then fades by 82%. There is no top-to-bottom
-  sweep or mask hiding the picture's zoom. It is absent while awaiting the image
-  and after completion, and skipped with reduced motion or `autoPlay={false}`.
+- After the image arrives, the original rotating pink/violet/blue conic glow
+  appears behind the reveal. At 60%, it fades while a 1.35× blurred wash appears
+  and the picture settles from 1.15× to 1× over 900ms with a 150ms lead-in.
+- From 60% to 100%, the original curved radial mask moves downward from above
+  the frame, revealing sharp details from top to bottom. A matching spectral
+  rim follows that edge; the mask sits outside the image's zoom so both edges
+  stay aligned. There is no center-out expansion. Glow and rim are absent while
+  awaiting the image and after completion, and skipped with reduced motion or
+  `autoPlay={false}`.
 - The labels advance from `Generating scene` to `Coloring` to `Loading`, then
   fade after completion. Their layout space remains reserved.
 
