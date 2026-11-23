@@ -122,6 +122,20 @@
   scale: 1;
   filter: blur(calc(var(--image-refine) * 8px)) saturate(1);
 }
+.generation-card .image-spectrum {
+  pointer-events: none;
+  transform-origin: 50% 50%;
+  mix-blend-mode: screen;
+  /* A soft spectral rim grows from the center without masking the picture's zoom. */
+  mask-image: radial-gradient(ellipse closest-side at center, rgb(0 0 0 / .1), rgb(0 0 0 / .2) 38%, #000 62%, transparent 96%);
+  -webkit-mask-image: radial-gradient(ellipse closest-side at center, rgb(0 0 0 / .1), rgb(0 0 0 / .2) 38%, #000 62%, transparent 96%);
+}
+.generation-card .spectrum-colors {
+  position: absolute;
+  inset: -60%;
+  background: conic-gradient(from 30deg, #ec4899, #8b5cf6, #3b82f6, #22d3ee, #ec4899);
+  filter: blur(40px);
+}
 .generation-card .image-frame[data-phase="done"] .dot-cloud,
 .generation-card .image-frame[data-error] .dot-cloud { animation-play-state: paused; }
 .generation-card .image-frame[data-error] .image-layer { visibility: hidden; }

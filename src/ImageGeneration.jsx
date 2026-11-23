@@ -37,6 +37,10 @@ export function ImageGeneration({
   const dotOpacity = useTransform(filled, value => 1 - value);
   const cloudGrow = useTransform(progress, [0, 100], [0.72, 1]);
   const refine = useTransform(progress, [60, 100], [1, 0]);
+  // The original spectral glow travels outward with the zoom, never down the frame.
+  const spectrumOpacity = useTransform(progress, [60, 61, 69, 78], [0, 0.9, 0.85, 0]);
+  const spectrumScale = useTransform(progress, [60, 78], [0.04, 2.4]);
+  const spectrumRotation = useTransform(progress, [60, 78], [-40, 80]);
 
   useImageFog({ imageRef, canvasRef, cloudRef, progress, src, loaded, loadingColor, loadingAccent, colorTransition,
     active: !failed && !instant && phase === 'forming' });
@@ -135,6 +139,10 @@ export function ImageGeneration({
           <img ref={imageRef} className="image-layer image-picture" src={src || undefined} alt="" aria-hidden="true" draggable="false"
             onLoad={() => { setFailed(false); setLoaded(true); }}
             onError={() => { setFailed(true); setLoaded(false); }} />
+          {!instant && <motion.div className="image-layer image-spectrum" aria-hidden="true"
+            style={{ opacity: spectrumOpacity, scale: spectrumScale }}>
+            <motion.div className="spectrum-colors" style={{ rotate: spectrumRotation }} />
+          </motion.div>}
         </motion.div>
       </motion.div>
     </section>

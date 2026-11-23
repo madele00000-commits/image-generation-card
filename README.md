@@ -2,7 +2,8 @@
 Image generation card with halftone dots, fog, color adaptation and zoom reveal
 
 A reusable React + Motion card with irregular halftone clouds, cyan fog and a
-small fixed brown patch, image-derived color blending, and a full-frame zoom reveal.
+small fixed brown patch, image-derived color blending, and a full-frame zoom reveal
+with a center-out spectral glow.
 Only the English status header and image are shown. The header disappears after
 the image settles, without moving the frame.
 
@@ -101,6 +102,10 @@ Reduced-motion preferences skip the reveal once the image is available.
 - Between 30% and 54% of post-arrival progress, fog fills the frame and dots fade.
 - At 60%, a 1.35× blurred wash appears over 150ms. The full picture fades in over
   400ms, then settles from 1.15× to 1× over 900ms with a 150ms lead-in.
+- During that same zoom, the original pink/violet/blue spectral glow expands
+  from the center to the frame's edges and fades away. There is no top-to-bottom
+  sweep or mask hiding the picture's zoom. It is absent while awaiting the image
+  and after completion, and skipped with reduced motion or `autoPlay={false}`.
 - The labels advance from `Generating scene` to `Coloring` to `Loading`, then
   fade after completion. Their layout space remains reserved.
 
