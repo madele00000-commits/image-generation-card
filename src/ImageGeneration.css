@@ -1,0 +1,171 @@
+.generation-card, .generation-card *, .generation-card *::before, .generation-card *::after { box-sizing: border-box; }
+
+.generation-card {
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  color: #d4d4d8;
+  width: 100%;
+  max-width: 304px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.generation-card .status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 24px;
+}
+.generation-card .status-stack { display: grid; }
+.generation-card .status-label { grid-area: 1 / 1; white-space: nowrap; text-align: left; }
+.generation-card .shimmer {
+  color: transparent;
+  background-image: linear-gradient(90deg, rgba(212, 212, 216, 0.5) 0%, #fafafa 50%, rgba(212, 212, 216, 0.5) 100%);
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: shimmer 2s linear infinite;
+}
+
+.generation-card .image-wrapper {
+  position: relative;
+  width: calc(100% - 24px);
+  max-width: 280px;
+  margin-inline: 12px;
+}
+.generation-card .image-frame {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid #27272a;
+  border-radius: 18px;
+  clip-path: inset(0 round 18px);
+  background: #f4f4f5;
+  --image-ease: cubic-bezier(.23, 1, .32, 1);
+}
+.generation-card .image-layer {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+}
+.generation-card .image-trails {
+  scale: 1.15;
+  filter: blur(calc(10px + 14px * var(--image-filled))) saturate(1.4);
+  transition: filter .7s linear;
+}
+.generation-card .dot-field {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: opacity .5s var(--image-ease);
+}
+.generation-card .dot-grid, .generation-card .dot-cloud {
+  position: absolute;
+  inset: 2px;
+  background-size: 8px 8px;
+  background-repeat: space;
+}
+.generation-card .dot-grid {
+  opacity: .05;
+  background-image: radial-gradient(circle, #71717a .6px, transparent 1.1px);
+}
+.generation-card .dot-cloud {
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position:
+    calc(50% + var(--cloud-a-x1) + var(--cloud-a-x2)) calc(50% + var(--cloud-a-y1) + var(--cloud-a-y2)),
+    calc(50% + var(--cloud-b-x1) + var(--cloud-b-x2)) calc(50% + var(--cloud-b-y1) + var(--cloud-b-y2));
+  mask-size:
+    calc(var(--cloud-a-w) * var(--cloud-grow)) calc(var(--cloud-a-h) * var(--cloud-grow)),
+    calc(var(--cloud-b-w) * var(--cloud-grow)) calc(var(--cloud-b-h) * var(--cloud-grow));
+  animation:
+    cloud-a-x1 8.1s ease-in-out infinite alternate,
+    cloud-a-x2 13.1s ease-in-out infinite alternate,
+    cloud-a-y1 11.7s ease-in-out infinite alternate,
+    cloud-a-y2 6.7s ease-in-out infinite alternate,
+    cloud-a-size 6.1s ease-in-out infinite alternate,
+    cloud-b-x1 15.1s ease-in-out infinite alternate,
+    cloud-b-x2 9.7s ease-in-out infinite alternate,
+    cloud-b-y1 10.9s ease-in-out infinite alternate,
+    cloud-b-y2 14.3s ease-in-out infinite alternate,
+    cloud-b-size 8.9s ease-in-out infinite alternate,
+    cloud-breathe 1.9s cubic-bezier(.66, 0, .34, 1) infinite;
+  /* Start mid-cycle so both clouds are visible in this shorter demo. */
+  animation-delay: -3s;
+}
+.generation-card .image-wash {
+  opacity: 0;
+  scale: 1.35;
+  filter: blur(24px) saturate(1.4);
+  transition: opacity .15s var(--image-ease);
+}
+.generation-card .image-picture {
+  opacity: 0;
+  scale: 1.15;
+  filter: blur(24px) saturate(1.4);
+  /* Let the enlarged wash land before the full-frame picture settles. */
+  transition: opacity .4s var(--image-ease), filter .9s var(--image-ease), scale .9s var(--image-ease) .15s;
+}
+.generation-card .image-frame:not([data-phase="forming"]) .image-wash { opacity: 1; }
+.generation-card .image-frame:not([data-phase="forming"]) .image-picture {
+  opacity: 1;
+  scale: 1;
+  filter: blur(calc(var(--image-refine) * 8px)) saturate(1);
+}
+.generation-card .image-frame[data-phase="done"] .dot-cloud,
+.generation-card .image-frame[data-error] .dot-cloud { animation-play-state: paused; }
+.generation-card .image-frame[data-error] .image-layer { visibility: hidden; }
+.generation-card .image-frame[data-instant] .image-picture { transition: none; }
+
+@property --cloud-a-x1 { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
+@property --cloud-a-x2 { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
+@property --cloud-a-y1 { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
+@property --cloud-a-y2 { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
+@property --cloud-b-x1 { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
+@property --cloud-b-x2 { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
+@property --cloud-b-y1 { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
+@property --cloud-b-y2 { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
+@property --cloud-a-w { syntax: '<percentage>'; inherits: false; initial-value: 72%; }
+@property --cloud-a-h { syntax: '<percentage>'; inherits: false; initial-value: 72%; }
+@property --cloud-b-w { syntax: '<percentage>'; inherits: false; initial-value: 72%; }
+@property --cloud-b-h { syntax: '<percentage>'; inherits: false; initial-value: 72%; }
+@property --cloud-grow { syntax: '<number>'; inherits: true; initial-value: 1; }
+
+@keyframes cloud-a-x1 { from { --cloud-a-x1: -70%; } to { --cloud-a-x1: 70%; } }
+@keyframes cloud-a-x2 { from { --cloud-a-x2: -66%; } to { --cloud-a-x2: 66%; } }
+@keyframes cloud-a-y1 { from { --cloud-a-y1: -70%; } to { --cloud-a-y1: 70%; } }
+@keyframes cloud-a-y2 { from { --cloud-a-y2: -66%; } to { --cloud-a-y2: 66%; } }
+@keyframes cloud-b-x1 { from { --cloud-b-x1: 70%; } to { --cloud-b-x1: -70%; } }
+@keyframes cloud-b-x2 { from { --cloud-b-x2: 66%; } to { --cloud-b-x2: -66%; } }
+@keyframes cloud-b-y1 { from { --cloud-b-y1: 70%; } to { --cloud-b-y1: -70%; } }
+@keyframes cloud-b-y2 { from { --cloud-b-y2: 66%; } to { --cloud-b-y2: -66%; } }
+@keyframes cloud-a-size {
+  from { --cloud-a-w: 78%; --cloud-a-h: 66%; }
+  to { --cloud-a-w: 66%; --cloud-a-h: 78%; }
+}
+@keyframes cloud-b-size {
+  from { --cloud-b-w: 67%; --cloud-b-h: 77%; }
+  to { --cloud-b-w: 77%; --cloud-b-h: 67%; }
+}
+@keyframes cloud-breathe { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+
+@keyframes shimmer {
+  from { background-position: 200% center; }
+  to { background-position: -200% center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .generation-card, .generation-card *, .generation-card *::before, .generation-card *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
