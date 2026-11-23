@@ -103,7 +103,8 @@ Reduced-motion preferences skip the reveal once the image is available.
 - At 60%, a 1.35× blurred wash appears over 150ms. The full picture fades in over
   400ms, then settles from 1.15× to 1× over 900ms with a 150ms lead-in.
 - During that same zoom, the original pink/violet/blue spectral glow expands
-  from the center to the frame's edges and fades away. There is no top-to-bottom
+  from the center to the frame's edges with vivid, saturated colors, holds at
+  full opacity through 72% progress, and fades by 82%. There is no top-to-bottom
   sweep or mask hiding the picture's zoom. It is absent while awaiting the image
   and after completion, and skipped with reduced motion or `autoPlay={false}`.
 - The labels advance from `Generating scene` to `Coloring` to `Loading`, then

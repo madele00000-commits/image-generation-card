@@ -38,9 +38,9 @@ export function ImageGeneration({
   const cloudGrow = useTransform(progress, [0, 100], [0.72, 1]);
   const refine = useTransform(progress, [60, 100], [1, 0]);
   // The original spectral glow travels outward with the zoom, never down the frame.
-  const spectrumOpacity = useTransform(progress, [60, 61, 69, 78], [0, 0.9, 0.85, 0]);
-  const spectrumScale = useTransform(progress, [60, 78], [0.04, 2.4]);
-  const spectrumRotation = useTransform(progress, [60, 78], [-40, 80]);
+  const spectrumOpacity = useTransform(progress, [60, 61, 72, 82], [0, 1, 1, 0]);
+  const spectrumScale = useTransform(progress, [60, 82], [0.04, 2.4]);
+  const spectrumRotation = useTransform(progress, [60, 82], [-40, 80]);
 
   useImageFog({ imageRef, canvasRef, cloudRef, progress, src, loaded, loadingColor, loadingAccent, colorTransition,
     active: !failed && !instant && phase === 'forming' });
